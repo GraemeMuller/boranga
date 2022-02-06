@@ -1,3 +1,4 @@
+from random import randrange
 from django.db.models import DateField
 from django.test import TestCase
 
@@ -10,90 +11,92 @@ def create_test_data():
     print('----------------------------------------------------')
     print('--------------ADDING TEST DATA----------------------')
     print('----------------------------------------------------')
-    create_species_fauna()
-    create_species_fauna_no_community()
-    create_species_flora()
-    create_species_flora_no_community()
+    read_data_files()
+    # create_species_fauna()
+    # create_species_fauna_no_community()
+    # create_species_flora()
+    # create_species_flora_no_community()
 
-def create_species_fauna():
+def read_data_files():
+    import csv
+    first_row = True
+    with open('/home/graeme/workspace/boranga/boranga/components/species_and_communities/tests/fauna.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in reader:
+            if first_row:
+                first_row = False
+                continue
+            create_species_fauna(row)
 
-    conservation_list = ConservationList.objects.create(name="ConservationList")
-    conservation_category = ConservationCategory.objects.create(name="ConservationCategory")
-    conservation_criteria = ConservationCriteria.objects.create(name="ConservationCriteria")
+
+def create_species_fauna(fauna_row):
+
+    conservation_list = ConservationList.objects.create(name=fauna_row[1])
+    conservation_category = ConservationCategory.objects.create(name=fauna_row[0].split('.')[2])
+    conservation_criteria = ConservationCriteria.objects.create(name=fauna_row[4])
     conservation_status = ConservationStatus.objects.create(conservation_list=conservation_list,
                                                             conservation_category=conservation_category,
                                                             conservation_criteria=conservation_criteria)
 
     group_type = GroupType.objects.create(name=GroupType.GROUP_TYPES[1][0])
 
-    taxon = "Pussy Cat"
-    taxon_id = 666
-    previous_name = "N/A"
-    family = "Muller"
-    genus = "Felix"
-    phylogenetic_group = "Felus"
-    name_authority = "No Idea1-1"
-    community_id = 17
-    community_number = 18
-    community_description = "South-west biodiversity region."
+    taxon = fauna_row[6]
+    taxon_id = fauna_row[5]
+    family = fauna_row[6]
+    genus = fauna_row[6]
+    phylogenetic_group = fauna_row[6]
+    name_authority = "WA Museum"
     taxonomy = Taxonomy.objects.create(taxon=taxon,
                                        taxon_id=taxon_id,
-                                       previous_name=previous_name,
                                        family=family,
                                        genus=genus,
                                        phylogenetic_group=phylogenetic_group,
-                                       name_authority=name_authority,
-                                       community_id=community_id,
-                                       community_number=community_number,
-                                       community_description=community_description,)
+                                       name_authority=name_authority,)
 
-    cat = Species.objects.create(common_name="Cat",
-                                 group_type = group_type,
-                                 scientific_name = "Puss",
-                                 name_currency = "No Idea 1",
-                                 conservation_status = conservation_status,
-                                 region = 1,
-                                 district = 1,
-                                 image = "path/to/cat.jog",
-                                 processing_status = "Complete 1",
-                                 taxonomy = taxonomy
+    fauna = Species.objects.create(common_name=fauna_row[7],
+                                   group_type = group_type,
+                                   scientific_name = fauna_row[6],
+                                   conservation_status = conservation_status,
+                                   region = randrange(500),
+                                   district = randrange(100),
+                                   image = "path/to/fauna.jpg",
+                                   taxonomy = taxonomy
 
     )
+    fauna.save()
 
 
+    # community_name = "Graeme's House"
+    # community_id = 17
+    # community_status = "Safe"
+    # region = 1
+    # district = 1
+    # conservation_status = "Priority"
+    # community = Community.objects.create(community_name=community_name,
+    #                                      community_id=community_id,
+    #                                      community_status=community_status,
+    #                                      region=region,
+    #                                      district=district,)
+    # community.species.add(cat)
+    # community.save()
 
-    community_name = "Graeme's House"
-    community_id = 17
-    community_status = "Safe"
-    region = 1
-    district = 1
-    conservation_status = "Priority"
-    community = Community.objects.create(community_name=community_name,
-                                         community_id=community_id,
-                                         community_status=community_status,
-                                         region=region,
-                                         district=district,)
-    community.species.add(cat)
-    community.save()
-
-    species_id = cat.id
-    category_id = 11
-    status = "Priority"
-    document = "cat_doc.pdf"
-    document_description = "A document describing the endangered status of a cat."
+    species_id = fauna_row[5]
+    category_id = fauna_row[5]
+    status = fauna_row[4]
+    document = "{}.pdf".format(fauna_row[5])
+    document_description = "{}.pdf".format(fauna_row[5])
     species_document = SpeciesDocument.objects.create(species_id=species_id,
                                                       category_id=category_id,
                                                       status=status,
                                                       document=document,
                                                       document_description=document_description,)
-    species_document.species.add(cat)
-    species_document.save()
-    species_id = cat.id
-    threat_category_id = 1111
-    threat_description = "Not very dangerous."
-    comment = "Not much to say."
-    document = "cat_threat_document.docx"
-    source = "Public"
+    species_document.species.add(fauna)
+    species_id = taxon_id
+    threat_category_id = randrange(1000),
+    threat_description = fauna_row[3]
+    comment = "{} is fauna".format(fauna_row[8])
+    document = "{}.pdf".format(fauna_row[5])
+    source = "WA Museum"
     conservation_threats = ConservationThreat(species_id=species_id,
                                               threat_category_id=threat_category_id,
                                               threat_description=threat_description,
@@ -101,29 +104,30 @@ def create_species_fauna():
                                               document=document,
                                               source=source,)
     conservation_threats.save()
+    
     _type = "Regular"
-    threat_category_id = 11111
-    region_id = 11
-    district_id = 111
-    comment = "Making too much noise."
-    source = "Public"
+    threat_category_id = randrange(10000)
+    region_id = randrange(1000)
+    district_id = randrange(100)
+    comment = "{} is a fauna plan.".format(fauna_row[8])
+    source = "WA Museum"
     conservation_plans = ConservationPlan.objects.create(threat_category_id=threat_category_id,
                                                          region_id=region_id,
                                                          district_id=district_id,
                                                          type=_type,
                                                          comment=comment,
                                                          source=source,)
-    conservation_plans.species.add(cat)
+    conservation_plans.species.add(fauna)
     conservation_plans.save()
 
-    department_file_numbers = "123, 234, 345"
-    community_original_area = 10
-    community_original_area_accuracy = 0.5
-    number_of_occurrences = 3
-    extent_of_occurrences = 5
-    area_of_occupancy = 20
-    number_of_iucn_locations = 5
-    community_original_area_reference = "South West"
+    department_file_numbers = fauna_row[3]
+    community_original_area = randrange(10000)
+    community_original_area_accuracy = randrange(1000)
+    number_of_occurrences = randrange(100)
+    extent_of_occurrences = randrange(100)
+    area_of_occupancy = randrange(100)
+    number_of_iucn_locations = randrange(100)
+    community_original_area_reference = fauna_row[7]
     distribution = Distribution.objects.create(department_file_numbers=department_file_numbers,
                                                community_original_area=community_original_area,
                                                community_original_area_accuracy=community_original_area_accuracy,
@@ -132,20 +136,20 @@ def create_species_fauna():
                                                area_of_occupancy=area_of_occupancy,
                                                number_of_iucn_locations=number_of_iucn_locations,
                                                community_original_area_reference=community_original_area_reference,
-                                               species=cat)
+                                               species=fauna)
     distribution.save()
 
-    general_management_advice = "Give them food."
-    ecological_attributes = "Too many of them."
-    biological_attributes = "Very cuddly."
-    specific_survey_advice = "Cuddle them."
-    comments = "Very nice animals."
+    general_management_advice = "{} is a fauna gen management advice.".format(fauna_row[8])
+    ecological_attributes = "{} is a fauna eco attribute.".format(fauna_row[8])
+    biological_attributes = "{} is a fauna bio attribute.".format(fauna_row[8])
+    specific_survey_advice = "{} is a fauna survey advice.".format(fauna_row[8])
+    comments = "{} is a fauna comment.".format(fauna_row[8])
     conservation_attributes = ConservationAttributes.objects.create(general_management_advice=general_management_advice,
                                                                     ecological_attributes=ecological_attributes,
                                                                     biological_attributes=biological_attributes,
                                                                     specific_survey_advice=specific_survey_advice,
                                                                     comments=comments,
-                                                                    species=cat)
+                                                                    species=fauna)
     conservation_attributes.save()
 
 def create_species_fauna_no_community():
