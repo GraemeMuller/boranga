@@ -1,8 +1,8 @@
 name: Publish Boranga
 
 on:
-  push:
-    branches: [ dev ]
+  release:
+    types: [created]
 
 jobs:
   publish-boranga-image:
