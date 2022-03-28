@@ -1,6 +1,6 @@
 <template lang="html">
     <div id="species">
-        <FormSection label="Taxonomy" Index="taxonomy">
+        <FormSection :formCollapse="false" label="Taxonomy" Index="taxonomy">
             <div class="row form-group">
                 <label for="" class="col-sm-3 control-label">Previous Name:</label>
                 <div class="col-sm-9">
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </FormSection>
-        <FormSection label="Distribution" Index="distribution">
+        <FormSection :formCollapse="false" label="Distribution" Index="distribution">
             <div class="row form-group">
                 <label for="" class="col-sm-3 control-label">Region:</label>
                 <div class="col-sm-9">
@@ -108,7 +108,7 @@
                 </div>
             </div>
         </FormSection>
-        <FormSection label="Conservation Attributes" Index="conservation_attributes">
+        <FormSection :formCollapse="false" label="Conservation Attributes" Index="conservation_attributes">
             <div class="row form-group">
                 <label for="" class="col-sm-3 control-label">General Management Advice:</label>
                 <div class="col-sm-9">
@@ -130,7 +130,7 @@
                 </div>
             </div>
         </FormSection>
-        <FormSection label="" Index="">
+        <FormSection :formCollapse="false" label="" Index="">
             <div class="row form-group">
                 <label for="" class="col-sm-3 control-label">Department File Numbers:</label>
                 <div class="col-sm-9">
@@ -144,7 +144,7 @@
                 </div>
             </div>
         </FormSection>
-        <FormSection label="Conservation Status" Index="conservation_status">
+        <FormSection :formCollapse="false" label="Conservation Status" Index="conservation_status">
             <div class="row form-group">
                 
             </div>
